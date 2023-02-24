@@ -1,5 +1,6 @@
 genome="ATCGGTGGCTCCGCCGCATCAGATCGAGAAACGTCTGCTCGAACTCTTGAGAGTAACCATTAACAACACGAGTCGGATTCTGACCCAAAACTTGCATCTGACGCTGGTGAGATTCGCTCATACAATGACACTTGAATCCATTCTCGTCTCGGCATTGTTTCTCACACATCTGAAATACCATCGAAGCTTTTGAAGTCCTTTCGCTTTTATTCGATTCGACATCGCCTTCGGGGTTAACATATCGTTCTTGCCCATCGATGATGAAGATTCCATTAGGGATTGAAGAGGAACTCATAACAAACATTGTTATGGTGAATAAGGCCCACTAATTAAAGCCCATACGGTACTGGGCCTAAGATTTAGATATATATTGGGCTATATGATTATTGTTGGGCCATTCTCTAGTATTCTGCATTCGTACCATAATTTACTTTTTAAGTTTTGACTTCTTTTTATTTTCTTTGGGAGCGTTTTCCTCTTTTAAATGACCGAATTTTTAGGGATCATGAAACTAGCGAGGACTATAATATTACTCTCTCATCTAAACTGAAGCAAAGGAATGACAAAATAAAGCTATCAAGCTATTGTTACCAACGCCAACATGTTGGTTCCTGAATTCTCGATATAATTTATCGAGCTTAAGGTTCAGGCTTGGTTTCTTGCACATACCCCACATTTTGATATGGAAACCGATACATCTCCGCCGATTTCATTAATGTGTTAAAGCTAGATAAGGACTCGTAAGGCATTTTCATCCATGGTAGAACTAGCATCATTAAATCTATCTCATGTCAAGACAAATGATTACGAAGGCTTTGTAGAATAACACACTAATAAAAAACAGCTTTCGGGTAAATTACGGAATCCCAAAATGCCTATATAGATAGTGAAAATTCATATGCCCATAAGCGCTAGCCAAAGCAAACTCTAGCTATTAATGTTATCACATTATAAGCATGCATATAATATACTCATGATTAAATATTCTCCATAAAGCAGCCATATAGATTTTCTCCCCCACTTTTTCTTCTTTTTTGACACCCTTTGCTACTTTCCTAAGATACCGATTACAATATGTGTATAAGATTTAAAGCCGAAATTTATCTTCTTCTTTTTTTTGTCAATTTATCTAAACCCAAATAAATTCAAAAGTAAATCCAAAACAAAATATTGTTGATATGATATCAACT"
-
+global total_Amino_list
+total_Amino_list=[]
 def mRNATranse(data):
     mRNA=[]
     for index in range(len(data)):
@@ -14,12 +15,14 @@ def mRNATranse(data):
     total_mRNA=''.join(acid for acid in mRNA)
     return total_mRNA
 
-def AminoTranse(data):
+def AminoTranse(k,data):
     start=False
     startPoint=0
+    endPoint=0
     Amino=[]
-    for index in range(len(data)):
-        try:
+
+    try:
+        for index in range(k,len(data)):
             if data[index]=='A' and data[index+1]=='U' and data[index+2]=='G':
                 Amino.append('M')
                 start=True
@@ -27,8 +30,8 @@ def AminoTranse(data):
                 break
             else:
                 continue
-        except:
-            break
+    except:
+        return total_Amino_list
     if start:
         try:
             for index in range(startPoint,len(data),3):
@@ -69,9 +72,11 @@ def AminoTranse(data):
                         elif data[index+2]=='C' or data[index+2]=='U':
                             Amino.append('C')
                         else:
+                            endPoint=index+3
                             break
                     elif data[index+1]=='A':
                         if data[index+2]=='G' or data[index+2]=='A':
+                            endPoint=index+3
                             break
                         else:
                             Amino.append('Y')
@@ -97,13 +102,14 @@ def AminoTranse(data):
         except:
             pass
         total_Amino=''.join(Acid for Acid in Amino)
-        return total_Amino
+        total_Amino_list.append(total_Amino)
+        AminoTranse(endPoint,data)
                 
 
 mRNA=mRNATranse(genome)
 print("mRNA Sequence")
 print(mRNA)
 print("\n")
-Amino_sequence=AminoTranse(mRNA)
+AminoTranse(0,mRNA)
 print("Amino_Acid Sequence")
-print(Amino_sequence)
+print(total_Amino_list)
